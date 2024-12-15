@@ -1,2 +1,43 @@
-# Calculator.proj
-The project of simulating a calculator for 24's cpl final work. 
+# Calculator.proj 实验指南
+    The project of simulating a calculator for 24's cpl final work. 
+## 前置知识
+    
+    如果你不了解 C 语言中的  struct, enum, union, typedef  的用法，请你首先查阅课本或其他资料再来阅读本实验指南。
+    如果你的目标为 100 分，建议不要急于开始，首先阅读实验指南的全文以进行合理的顶层设计，这可能比在原来的基础上加东⻄更加节省时间。
+    
+## 总览
+    
+    在读入了每一行语句之后，我们可能需要依次进行以下步骤。
+    1.  词法分析
+    2.  语法分析 & 表达式求值
+    3.  变量赋值
+    大家会在《编译原理》课程中学会真正的词法分析和语法分析。这里，我们大致描述一下这些步骤分别都是在做什么。
+
+### 词法分析
+
+    当我们得到一个表达式，
+
+    1|    1 + （ 33 + 2 ） * 4 - 5
+
+    我们要做的第一步就是将这个输入的字符串转化为计算机内部的数据表示，具体来说，我们需要按照分隔符（一个空格 ' ' ）将每个字符串分段，并求出每一段（称为 token）的类型。
+    比如，上面的表达式可以分成以下几个 token 。
+
+    1|    number     "1"
+    2|    operator   "+"
+    3|    operator   "("
+    4|    number     "33"
+    5|    ...
+
+    你可以阅读 “语言规约” 部分来了解需要支持的不同 token 类型。
+    在词法分析结束之后，你可以将所有的 token 储存在一个连续的数组中，你可以使用一个  tokens[]  数组来连续储存所有 token 。
+
+    1|    typedef struct token {
+    2|        int type;
+    3|        char str[32];
+    4|    } Token;
+    5|  
+    6|    Token tokens[...];
+
+### 语法分析 & 表达式求值
+
+#### 概述
