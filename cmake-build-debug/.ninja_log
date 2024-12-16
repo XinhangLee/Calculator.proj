@@ -1,0 +1,4 @@
+# ninja log v6
+2	183	7560479719526312	CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj	8c3dccce43a36a74
+15	186	7560479719657477	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
+186	306	7560479721361641	Calculator_proj.exe	b9ad1ca0cfe50d9d
