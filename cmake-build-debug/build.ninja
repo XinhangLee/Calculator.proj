@@ -49,19 +49,19 @@ cmake_ninja_workdir = D$:/cpl/filework/Calculator.proj/cmake-build-debug/
 
 build cmake_object_order_depends_target_Calculator_proj: phony || .
 
-build CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj: C_COMPILER__Calculator_proj_unscanned_Debug D$:/cpl/filework/Calculator.proj/calculation/calculation.c || cmake_object_order_depends_target_Calculator_proj
-  DEP_FILE = CMakeFiles\Calculator_proj.dir\calculation\calculation.c.obj.d
-  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
-  INCLUDES = -ID:/cpl/filework/Calculator.proj/calculation
-  OBJECT_DIR = CMakeFiles\Calculator_proj.dir
-  OBJECT_FILE_DIR = CMakeFiles\Calculator_proj.dir\calculation
-
 build CMakeFiles/Calculator_proj.dir/test.c.obj: C_COMPILER__Calculator_proj_unscanned_Debug D$:/cpl/filework/Calculator.proj/test.c || cmake_object_order_depends_target_Calculator_proj
   DEP_FILE = CMakeFiles\Calculator_proj.dir\test.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   INCLUDES = -ID:/cpl/filework/Calculator.proj/calculation
   OBJECT_DIR = CMakeFiles\Calculator_proj.dir
   OBJECT_FILE_DIR = CMakeFiles\Calculator_proj.dir
+
+build CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj: C_COMPILER__Calculator_proj_unscanned_Debug D$:/cpl/filework/Calculator.proj/calculation/calculation.c || cmake_object_order_depends_target_Calculator_proj
+  DEP_FILE = CMakeFiles\Calculator_proj.dir\calculation\calculation.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  INCLUDES = -ID:/cpl/filework/Calculator.proj/calculation
+  OBJECT_DIR = CMakeFiles\Calculator_proj.dir
+  OBJECT_FILE_DIR = CMakeFiles\Calculator_proj.dir\calculation
 
 
 # =============================================================================
@@ -71,7 +71,7 @@ build CMakeFiles/Calculator_proj.dir/test.c.obj: C_COMPILER__Calculator_proj_uns
 #############################################
 # Link the executable Calculator_proj.exe
 
-build Calculator_proj.exe: C_EXECUTABLE_LINKER__Calculator_proj_Debug CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj CMakeFiles/Calculator_proj.dir/test.c.obj
+build Calculator_proj.exe: C_EXECUTABLE_LINKER__Calculator_proj_Debug CMakeFiles/Calculator_proj.dir/test.c.obj CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Calculator_proj.dir

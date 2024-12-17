@@ -4,6 +4,9 @@
 #include "calculation.h"
 #include <string.h>
 #include <ctype.h>
+#include <stdio.h>
+
+const char opt[7] = {'+','-','*','/','=','(',')'};
 
 bool IsDigit(char *str) {
     bool result = true;
@@ -43,13 +46,13 @@ bool IsVariable(char *str) {
     return result;
 }
 
-bool process(Token token) {
-    if (IsDigit(token.str))
-        token.type = INTEGER;
-    else if (IsOperator(token.str))
-        token.type = OPERATOR;
-    else if (IsVariable(token.str))
-        token.type = VARIABLE;
+bool process(Token *token) {
+    if (IsDigit(token->str))
+        token->type = INTEGER;
+    else if (IsOperator(token->str))
+        token->type = OPERATOR;
+    else if (IsVariable(token->str))
+        token->type = VARIABLE;
     else
         return false;
     return true;
@@ -57,12 +60,16 @@ bool process(Token token) {
 
 bool MorghJudge(char *str,Token tokens[]) {
     int i = 0;
-    for (char *pos = strchr(str,' '); pos != NULL; pos = pos + 1) {
+    for (char *pos = strchr(str,' '); pos != NULL; str = pos + 1, pos = strchr(str, ' ')) {
         *pos = '\0';
         strcpy(tokens[i].str,str);
-        if (!process(tokens[i]))
+        if (!process(&tokens[i++]))
             return false;
     }
+    strcpy(tokens[i].str,str);
+    if (!process(&tokens[i++]))
+        return false;
+    Print(tokens,i);
     return true;
 }
 
@@ -78,4 +85,10 @@ int Calculate(Token tokens[]) {
 
 void Assign(Token tokens[], Variable vars[], int vars_num) {
 
+}
+
+void Print(Token tokens[], int tokens_num) {
+    for (int i = 0; i < tokens_num; i++) {
+        printf("%d %s\n",tokens[i].type,tokens[i].str);
+    }
 }

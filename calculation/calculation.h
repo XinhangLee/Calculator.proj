@@ -6,9 +6,8 @@
 #define CALCULATION_H
 
 #include <stdbool.h>
-//define the structs.
 
-const char opt[7] = {'+','-','*','/','=','(',')'};
+//define the structs.
 
 enum tokens {VARIABLE,INTEGER,OPERATOR};
 
@@ -28,12 +27,14 @@ bool IsDigit(char *str);
 bool IsOperator(char *str);
 bool IsVariable(char *str);
 
-bool process(Token token);
+bool process(Token *token);
 bool MorghJudge(char *str,Token tokens[]);
 
 bool GramJudge(Token tokens[]);
 int Calculate(Token tokens[]);
 
 void Assign(Token tokens[],Variable vars[],int vars_num);
+
+void Print(Token tokens[], int vars_num);
 
 #endif //CALCULATION_H

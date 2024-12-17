@@ -9,10 +9,11 @@ int main() {
     Variable vars[100];
     int vars_num = 0;
     while (fgets(str, sizeof(str), stdin)) {
-
+        // printf("%s\n", str);
         Token tokens[150];
 
-        MorghJudge(str,tokens);
+        if (MorghJudge(str,tokens))
+            printf("1");
 
         GramJudge(tokens);
         Calculate(tokens);

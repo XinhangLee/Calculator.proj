@@ -6,6 +6,5 @@ set(CMAKE_C_STANDARD 11)
 include_directories(calculation)
 
 add_executable(Calculator_proj
-    calculation/calculation.c
-    calculation/calculation.h
-    test.c)
+        test.c
+        calculation/calculation.c)

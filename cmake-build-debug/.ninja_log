@@ -1,14 +1,14 @@
 # ninja log v6
-2	183	7560479719526312	CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj	8c3dccce43a36a74
-7	68	7561307329520037	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
-144	382	7561279000968947	Calculator_proj.exe	e3f986db44753d1d
-3	64	7561307771264165	CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj	8c3dccce43a36a74
-65	157	7561307771880725	Calculator_proj.exe	e3f986db44753d1d
-2	65	7561307929032019	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
-66	160	7561307929661500	Calculator_proj.exe	e3f986db44753d1d
-2	75	7561308076171810	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
-75	174	7561308076900569	Calculator_proj.exe	e3f986db44753d1d
-2	64	7561308246510321	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
-65	149	7561308247134125	Calculator_proj.exe	e3f986db44753d1d
-3	73	7561308440355288	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
-73	168	7561308441063354	Calculator_proj.exe	e3f986db44753d1d
+9	134	7561358606975196	CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj	8c3dccce43a36a74
+2	109	7561358606905388	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
+2	111	7561354967635316	CMakeFiles/test.c.dir/calculation/calculation.c.obj	39f1dcd722c1ea1d
+3	112	7561361875690756	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
+10	126	7561361875763732	CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj	8c3dccce43a36a74
+127	289	7561361876921649	Calculator_proj.exe	d85b1b6facf0ff54
+5	109	7561362979682156	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
+110	278	7561362980733339	Calculator_proj.exe	d85b1b6facf0ff54
+4	103	7561363924144482	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
+128	301	7561363925376690	Calculator_proj.exe	d85b1b6facf0ff54
+4	116	7561367341756297	CMakeFiles/Calculator_proj.dir/test.c.obj	3554f818718d3eda
+4	117	7561367657739603	CMakeFiles/Calculator_proj.dir/calculation/calculation.c.obj	8c3dccce43a36a74
+118	283	7561367658879198	Calculator_proj.exe	d85b1b6facf0ff54
