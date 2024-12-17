@@ -1,10 +1,4 @@
 "D:\cpl\CLion 2024.3\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/cpl/CLion 2024.3/bin/ninja/win/x64/ninja.exe" -G Ninja -S D:\cpl\filework\Calculator.proj -B D:\cpl\filework\Calculator.proj\cmake-build-debug
--- The C compiler identification is GNU 14.2.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: D:/cpl/mingw64/bin/gcc.exe - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Configuring done (1.0s)
--- Generating done (0.0s)
+-- Configuring done (0.2s)
+-- Generating done (0.1s)
 -- Build files have been written to: D:/cpl/filework/Calculator.proj/cmake-build-debug
