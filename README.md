@@ -80,7 +80,7 @@ Token tokens[...];
 |   <expr> "/" <expr>
 ```
 
-上面这种表示方法就是大名鼎鼎的 [BNF1]( https://blog.zenheart.site/posts/2016-08-22-bnf.html#%E4%BB%80%E4%B9%88%E6%98%AF-bnf-%E8%8C%83%E5%BC%8F ) / [BNF2](https://zhuanlan.zhihu.com/p/627568812) , 任何一本正规的程序设计语言教程都会使用 `BNF` 来给出这种程序设计语言的语法.
+上面这种表示方法就是大名鼎鼎的 [BNF1]( https://blog.zenheart.site/posts/2016-08-22-bnf.html#%E4%BB%80%E4%B9%88%E6%98%AF-bnf-%E8%8C%83%E5%BC%8F ) / [BNF2](https://zhuanlan.zhihu.com/p/627568812) , 任何一本正规的程序设计语言教程都会使用 `BNF` 来给出这种程序设计语言的语法。
 为了在 `token` 表达式中指示一个子表达式，我们可以使用两个整数  `l`  和  `r`  来指示这个子表达式的开始位置和结束位置。这样我们就可以很容易把求值函数的框架写出来了:
 
 ``` C
@@ -116,8 +116,7 @@ eval(l, r) {
 "( 2 - 1 )"              // true
 "( 4 + 3 * ( 2 - 1 ) )"  // true
 "4 + 3 * ( 2 - 1 )"      // false, the whole expression is not surrounded by a matched pair of parentheses
-// pair of parentheses
-"( ( 4 + 3 ) ) * ( ( 2 - 1 ) )" // false, bad expression
+"( 4 + 3 ) ) * ( ( 2 - 1 )" // false, bad expression
 "( 4 + 3 ) * ( 2 - 1 )"       // false, the leftmost '(' and the rightmost ')' are not matched
 ```
 
