@@ -30,6 +30,8 @@ bool IsVariable(char *str);
 bool process(Token *token);
 bool MorghJudge(char *str,Token tokens[]);
 
+bool IsAssignment(Token tokens[]);
+
 bool GramJudge(Token tokens[]);
 int Calculate(Token tokens[]);
 

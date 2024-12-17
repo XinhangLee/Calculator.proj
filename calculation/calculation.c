@@ -32,7 +32,7 @@ bool IsOperator(char *str) {
 
 bool IsVariable(char *str) {
     bool result = true;
-    if (!isalpha(str[1]) && str[1] != '_')
+    if (!isalpha(str[0]) && str[0] != '_')
         result = false;
     else {
         while (*str != '\0') {
@@ -71,6 +71,10 @@ bool MorghJudge(char *str,Token tokens[]) {
         return false;
     Print(tokens,i);
     return true;
+}
+
+bool IsAssignment(Token tokens[]) {
+    return tokens[0].type == VARIABLE && tokens[1].str[0] == '=';
 }
 
 bool GramJudge(Token tokens[]) {
