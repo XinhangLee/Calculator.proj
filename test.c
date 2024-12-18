@@ -10,7 +10,8 @@
 int main() {
     char str[1030];
     Variable vars[100];
-    int vars_num = 0;
+    int vars_num = 0,check = 1;
+
     while (fgets(str, sizeof(str), stdin)) {
         // printf("%s\n", str);
 
@@ -22,21 +23,26 @@ int main() {
         Token tokens[150];
         int tokens_num = 0;
 
-        if (MorghJudge(str,tokens,&tokens_num)) {
+        if (MorghJudge(str,tokens,&tokens_num,vars,vars_num)) {
             // printf("%d\n", tokens_num);
+
             if (!IsAssignment(tokens)) {
                 // printf("yes\n");
 
-                int result = Calculate(tokens,tokens + tokens_num - 1);
-                printf("%d\n", result);
-
-                if (result == -1) {
+                int result = Calculate(tokens,tokens + tokens_num - 1,&check);
+                if (check == 0) {
                     printf("Error\n");
                 }
+                else {
+                    printf("%d\n", result);
+                }
+
             }
 
             else {
-                Assign(tokens,vars,vars_num);
+                Assign(tokens,vars,&vars_num,tokens_num,&check);
+                printf("%d\n", vars[vars_num].value);
+                vars_num++;
             }
         }
 

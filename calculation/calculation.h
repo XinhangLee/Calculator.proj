@@ -27,17 +27,18 @@ bool IsDigit(char *str);
 int IsOperator(char *str);
 bool IsVariable(char *str);
 
-bool process(Token *token);
-bool MorghJudge(char *str,Token tokens[], int *i);
+char *ToChar(int number,char *result);
+bool process(Token *token,Variable vars[],int vars_num);
+bool MorghJudge(char *str,Token tokens[],int *i,Variable vars[],int vars_num);
 
 bool IsAssignment(Token tokens[]);
 
 int ToInt(char *str);
 int check_parentheses(Token *left,Token *right);
 Token *FindMainOperator(Token *left,Token *right);
-int Calculate(Token *left, Token *right);
+int Calculate(Token *left, Token *right,int *check);
 
-void Assign(Token tokens[],Variable vars[],int vars_num);
+void Assign(Token tokens[],Variable vars[],int *vars_num, int tokens_num,int *check);
 
 void Print(Token tokens[], int vars_num);
 

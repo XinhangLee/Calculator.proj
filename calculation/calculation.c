@@ -50,27 +50,49 @@ bool IsVariable(char *str) {
     return result;
 }
 
-bool process(Token *token) {
+char *ToChar(int number,char *result) {
+    int i;
+    for (i = 0; number != 0; i++, number /= 10) {
+        result[i] = number % 10 + '0';
+    }
+    i--;
+    for (int j = 0; j < i; i--,j++) {
+        char temp = result[j];
+        result[j] = result[i];
+        result[i] = temp;
+    }
+    return result;
+}
+
+bool process(Token *token,Variable vars[],int vars_num) {
     if (IsDigit(token->str))
         token->type = INTEGER;
     else if (IsOperator(token->str) != -1)
         token->type = IsOperator(token->str);
-    else if (IsVariable(token->str))
+    else if (IsVariable(token->str)) {
         token->type = VARIABLE;
+        for (int i = 0; i < vars_num; i++) {
+            if (strcmp(token->str,vars[i].name) == 0) {
+                char temp[50] = {'\0'};
+                strcpy(token->str, ToChar(vars[i].value,temp));
+                break;
+            }
+        }
+    }
     else
         return false;
     return true;
 }
 
-bool MorghJudge(char *str,Token tokens[], int *i) {
+bool MorghJudge(char *str,Token tokens[], int *i,Variable vars[],int vars_num) {
     for (char *pos = strchr(str,' '); pos != NULL; str = pos + 1, pos = strchr(str, ' ')) {
         *pos = '\0';
         strcpy(tokens[*i].str,str);
-        if (!process(&tokens[(*i)++]))
+        if (!process(&tokens[(*i)++],vars,vars_num))
             return false;
     }
     strcpy(tokens[*i].str,str);
-    if (!process(&tokens[(*i)++]))
+    if (!process(&tokens[(*i)++],vars,vars_num))
         return false;
     // Print(tokens,*i);
     return true;
@@ -135,24 +157,24 @@ Token *FindMainOperator(Token *left,Token *right) {
     return key;
 }
 
-int Calculate(Token *left, Token *right) {
+int Calculate(Token *left, Token *right,int *check) {
     int output = 0;
     if (left > right) {
-        output = -1;
+        check = 0;
     }
     else if (left == right) {
         output = ToInt(left->str);
     }
     else if (check_parentheses(left,right) == 1) {
-        return Calculate(left + 1,right - 1);
+        return Calculate(left + 1,right - 1,check);
     }
     else if (check_parentheses(left,right) == -1) {
-        output = -1;
+        check = 0;
     }
     else {
         Token *main = FindMainOperator(left,right);
-        int val1 = Calculate(left,main - 1);
-        int val2 = Calculate(main + 1,right);
+        int val1 = Calculate(left,main - 1,check);
+        int val2 = Calculate(main + 1,right,check);
 
         switch (main->type) {
             case ADD:
@@ -164,16 +186,17 @@ int Calculate(Token *left, Token *right) {
             case DIV:
                 output = val1 / val2;break;
             default:
-                output = -1;break;
+                check = 0;break;
         }
     }
-//output:   -1 : 违法表达式。
+//output:    0 : 违法表达式。
 //     具体的值  ： 输出。
     return output;
 }
 
-void Assign(Token tokens[],Variable vars[],int vars_num) {
-
+void Assign(Token tokens[],Variable vars[],int *vars_num, int tokens_num,int *check) {
+    strcpy(vars[*vars_num].name, tokens[0].str);
+    vars[*vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check);
 }
 
 void Print(Token tokens[], int tokens_num) {
