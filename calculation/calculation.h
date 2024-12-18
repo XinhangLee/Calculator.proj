@@ -9,7 +9,7 @@
 
 //define the structs.
 
-enum tokens {VARIABLE,INTEGER,OPERATOR};
+enum tokens {ADD,SUB,MUL,DIV,EQU,LEFT,RIGHT,VARIABLE,INTEGER};
 
 typedef struct token {
     int type;
@@ -24,16 +24,18 @@ typedef struct variable {
 //define the functions.
 
 bool IsDigit(char *str);
-bool IsOperator(char *str);
+int IsOperator(char *str);
 bool IsVariable(char *str);
 
 bool process(Token *token);
-bool MorghJudge(char *str,Token tokens[]);
+bool MorghJudge(char *str,Token tokens[], int *i);
 
 bool IsAssignment(Token tokens[]);
 
-bool GramJudge(Token tokens[]);
-int Calculate(Token tokens[]);
+int ToInt(char *str);
+int check_parentheses(Token *left,Token *right);
+Token *FindMainOperator(Token *left,Token *right);
+int Calculate(Token *left, Token *right);
 
 void Assign(Token tokens[],Variable vars[],int vars_num);
 
