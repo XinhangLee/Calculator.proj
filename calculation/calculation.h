@@ -33,13 +33,17 @@ bool MorghJudge(char *str,Token tokens[],int *i,Variable vars[],int vars_num);
 
 bool IsAssignment(Token tokens[]);
 
+bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num);
 int ToInt(char *str);
 int check_parentheses(Token *left,Token *right);
 Token *FindMainOperator(Token *left,Token *right);
 bool IsNeg(Token *left,Token * right);
 int Calculate(Token *left, Token *right,int *check);
 
-void Assign(Token tokens[],Variable vars[],int *vars_num, int tokens_num,int *check);
+bool IsOutput(Token tokens,int tokens_num);
+void output(Token tokens,Variable vars[],int vars_num);
+
+void Assign(Token tokens[],Variable vars[],int vars_num, int tokens_num,int *check);
 
 void Print(Token tokens[], int vars_num);
 

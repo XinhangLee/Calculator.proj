@@ -26,9 +26,9 @@ int main() {
         if (MorghJudge(str,tokens,&tokens_num,vars,vars_num)) {
             // printf("%d\n", tokens_num);
 
-            if (!IsAssignment(tokens)) {
+            if (!IsAssignment(tokens) && !IsOutput(tokens[0],tokens_num) &&
+                Assignment(tokens,vars,tokens_num,vars_num)) {
                 // printf("yes\n");
-
                 int result = Calculate(tokens,tokens + tokens_num - 1,&check);
                 if (check == 0) {
                     printf("Error\n");
@@ -36,13 +36,18 @@ int main() {
                 else {
                     printf("%d\n", result);
                 }
-
             }
-
+            else if (IsOutput(tokens[0],tokens_num)) {
+                output(tokens[0],vars,vars_num);
+            }
             else {
-                Assign(tokens,vars,&vars_num,tokens_num,&check);
-                printf("%d\n", vars[vars_num].value);
-                vars_num++;
+                Assign(tokens,vars,vars_num,tokens_num,&check);
+                if (check == 0) {
+                    printf("Error\n");
+                }else {
+                    printf("%d\n", vars[vars_num].value);
+                    vars_num++;
+                }
             }
         }
 

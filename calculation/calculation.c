@@ -73,13 +73,6 @@ bool process(Token *token,Variable vars[],int vars_num) {
     }
     else if (IsVariable(token->str)) {
         token->type = VARIABLE;
-        for (int i = 0; i < vars_num; i++) {
-            if (strcmp(token->str,vars[i].name) == 0) {
-                char temp[50] = {'\0'};
-                strcpy(token->str, ToChar(vars[i].value,temp));
-                break;
-            }
-        }
     }
     else
         return false;
@@ -100,8 +93,24 @@ bool MorghJudge(char *str,Token tokens[], int *i,Variable vars[],int vars_num) {
     return true;
 }
 
-bool IsAssignment(Token tokens[]) {
-    return tokens[0].type == VARIABLE && tokens[1].str[0] == '=';
+bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num) {
+    for (int j = 0; j < tokens_num; j++) {
+        if (tokens[j].type == VARIABLE) {
+            int found = 0;
+            for (int i = 0; i < vars_num; i++) {
+                if (strcmp(tokens[j].str,vars[i].name) == 0) {
+                    char temp[50] = {'\0'};
+                    strcpy(tokens[j].str, ToChar(vars[i].value,temp));
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 int ToInt(char *str) {
@@ -123,9 +132,9 @@ int check_parentheses(Token *left,Token *right) {
     int count = 0;
     Token *l = left;
     while (l <= right) {
-        if (l -> type == '(')
+        if (l -> type == LEFT)
             count++;
-        else if (l -> type == ')')
+        else if (l -> type == RIGHT)
             count--;
         if (count < 0)
             result = -1;//不合语法，直接OUT。
@@ -133,7 +142,7 @@ int check_parentheses(Token *left,Token *right) {
     }
     if (count != 0)
         result = -1;//不合语法，OUT。
-    else if (left->type != '(' || right->type != ')')
+    else if (left->type != LEFT || right->type != RIGHT)
         result = 0;//合语法但不是我想要的。
     return result;
 }
@@ -151,13 +160,13 @@ Token *FindMainOperator(Token *left,Token *right) {
             l++;
             continue;
         }
-        if (key -> type != ADD && key -> type != SUB) {
-            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER)) || l -> type == MUL || l -> type == DIV) {
+        if (key -> type == ADD || (key -> type == SUB && ((key - 1) -> type == VARIABLE || (key - 1) -> type == INTEGER))) {
+            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER))) {
                 key = l;
             }
         }
         else {
-            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER))) {
+            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER)) || l -> type == MUL || l -> type == DIV) {
                 key = l;
             }
         }
@@ -166,18 +175,20 @@ Token *FindMainOperator(Token *left,Token *right) {
     return key;
 }
 
-bool IsNeg(Token *left,Token * right) {
+bool IsNeg(Token *left,Token *right) {
     bool result = true;
     Token *l = left;
     if (l -> type != SUB)
         result = false;
-    while (result && l <= right) {
-        if (l -> type != SUB && l -> type != INTEGER && l -> type != VARIABLE) {
+    while (result && l < right) {
+        if (l -> type != SUB) {
             result = false;
             break;
         }
         l++;
     }
+    if (right -> type != INTEGER && right -> type != VARIABLE)
+        result = false;
     return result;
 }
 
@@ -198,10 +209,8 @@ int Calculate(Token *left, Token *right,int *check) {
         return output;
     }
     else if (IsNeg(left,right)) {
-        if (left -> type == SUB) {
-            strcat((left + 1) -> str,left ->str);
-            output = Calculate(left + 1,right,check);
-        }
+        strcat((left + 1) -> str,left ->str);
+        output = Calculate(left + 1,right,check);
     }
     else {
         Token *main = FindMainOperator(left,right);
@@ -231,9 +240,28 @@ int Calculate(Token *left, Token *right,int *check) {
     return output;
 }
 
-void Assign(Token tokens[],Variable vars[],int *vars_num, int tokens_num,int *check) {
-    strcpy(vars[*vars_num].name, tokens[0].str);
-    vars[*vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check);
+bool IsOutput(Token tokens,int tokens_num) {
+    return tokens_num == 1 && tokens.type == VARIABLE;
+}
+
+void output(Token tokens,Variable vars[],int vars_num) {
+    for (int i = 0; i < vars_num; i++) {
+        if (strcmp(vars[i].name,tokens.str) == 0) {
+            printf("%d\n",vars[i].value);
+            return;
+        }
+    }
+    printf("Error\n");
+}
+
+bool IsAssignment(Token tokens[]) {
+    return tokens[0].type == VARIABLE && tokens[1].str[0] == '=';
+}
+
+void Assign(Token tokens[],Variable vars[],int vars_num, int tokens_num,int *check) {
+    strcpy(vars[vars_num].name, tokens[0].str);
+    vars[vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check);
+
 }
 
 void Print(Token tokens[], int tokens_num) {
