@@ -36,6 +36,7 @@ bool IsAssignment(Token tokens[]);
 int ToInt(char *str);
 int check_parentheses(Token *left,Token *right);
 Token *FindMainOperator(Token *left,Token *right);
+bool IsNeg(Token *left,Token * right);
 int Calculate(Token *left, Token *right,int *check);
 
 void Assign(Token tokens[],Variable vars[],int *vars_num, int tokens_num,int *check);

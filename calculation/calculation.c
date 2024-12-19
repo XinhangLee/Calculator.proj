@@ -65,10 +65,12 @@ char *ToChar(int number,char *result) {
 }
 
 bool process(Token *token,Variable vars[],int vars_num) {
+    int op = IsOperator(token->str);
     if (IsDigit(token->str))
         token->type = INTEGER;
-    else if (IsOperator(token->str) != -1)
-        token->type = IsOperator(token->str);
+    else if (op != -1){
+        token->type = op;
+    }
     else if (IsVariable(token->str)) {
         token->type = VARIABLE;
         for (int i = 0; i < vars_num; i++) {
@@ -105,7 +107,12 @@ bool IsAssignment(Token tokens[]) {
 int ToInt(char *str) {
     int value = 0;
     while (*str != '\0') {
-        value = (value * 10) + (*str - '0');
+        if (isdigit(*str)) {
+            value = (value * 10) + (*str - '0');
+        }
+        else if (*str == '-') {
+            value = -value;
+        }
         str++;
     }
     return value;
@@ -140,15 +147,17 @@ Token *FindMainOperator(Token *left,Token *right) {
             count++;
         else if (l -> type == RIGHT)
             count--;
-        if (count != 0)
+        if (count != 0) {
+            l++;
             continue;
+        }
         if (key -> type != ADD && key -> type != SUB) {
-            if (l -> type == ADD || l -> type == SUB || l -> type == MUL || l -> type == DIV) {
+            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER)) || l -> type == MUL || l -> type == DIV) {
                 key = l;
             }
         }
         else {
-            if (l -> type == ADD || l -> type == SUB) {
+            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER))) {
                 key = l;
             }
         }
@@ -157,25 +166,51 @@ Token *FindMainOperator(Token *left,Token *right) {
     return key;
 }
 
+bool IsNeg(Token *left,Token * right) {
+    bool result = true;
+    Token *l = left;
+    if (l -> type != SUB)
+        result = false;
+    while (result && l <= right) {
+        if (l -> type != SUB && l -> type != INTEGER && l -> type != VARIABLE) {
+            result = false;
+            break;
+        }
+        l++;
+    }
+    return result;
+}
+
 int Calculate(Token *left, Token *right,int *check) {
     int output = 0;
     if (left > right) {
-        check = 0;
+        *check = 0;
+        return output;
     }
-    else if (left == right) {
+    if (left == right) {
         output = ToInt(left->str);
     }
     else if (check_parentheses(left,right) == 1) {
         return Calculate(left + 1,right - 1,check);
     }
     else if (check_parentheses(left,right) == -1) {
-        check = 0;
+        *check = 0;
+        return output;
+    }
+    else if (IsNeg(left,right)) {
+        if (left -> type == SUB) {
+            strcat((left + 1) -> str,left ->str);
+            output = Calculate(left + 1,right,check);
+        }
     }
     else {
         Token *main = FindMainOperator(left,right);
+        if (main->type != ADD && main->type != SUB && main->type != MUL && main->type != DIV) {
+            *check = 0;
+            return output;
+        }
         int val1 = Calculate(left,main - 1,check);
         int val2 = Calculate(main + 1,right,check);
-
         switch (main->type) {
             case ADD:
                 output = val1 + val2;break;
@@ -184,13 +219,15 @@ int Calculate(Token *left, Token *right,int *check) {
             case MUL:
                 output = val1 * val2;break;
             case DIV:
+                if (val2 == 0) {
+                    *check = 0;
+                    break;
+                }
                 output = val1 / val2;break;
             default:
-                check = 0;break;
+                *check = 0;break;
         }
     }
-//output:    0 : 违法表达式。
-//     具体的值  ： 输出。
     return output;
 }
 
