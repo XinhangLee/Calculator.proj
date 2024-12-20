@@ -2,7 +2,6 @@
 // Created by lixh1 on 24-12-15.
 //
 #include <ctype.h>
-
 #include "calculation/calculation.h"
 #include <stdio.h>
 #include <string.h>
@@ -10,7 +9,7 @@
 int main() {
     char str[1030];
     Variable vars[100];
-    int vars_num = 0,check = 1;
+    int vars_num = 0;
 
     while (fgets(str, sizeof(str), stdin)) {
         // printf("%s\n", str);
@@ -28,24 +27,14 @@ int main() {
 
             if (!IsAssignment(tokens) && !IsOutput(tokens[0],tokens_num)) {
                 // printf("yes\n");
-                int result = Calculate(tokens,tokens + tokens_num - 1,&check,vars,vars_num);
-                if (check == 0) {
-                    printf("Error\n");
-                }
-                else {
-                    printf("%d\n", result);
-                }
+                printOut(Calculate(tokens,tokens + tokens_num - 1,vars,vars_num));
             }
             else if (IsOutput(tokens[0],tokens_num)) {
                 output(tokens[0],vars,vars_num);
             }
             else {
-                Assign(tokens,vars,&vars_num,tokens_num,&check);
-                if (check == 0) {
-                    printf("Error\n");
-                }else {
-                    printf("%d\n", vars[vars_num - 1].value);
-                }
+                Assign(tokens,vars,&vars_num,tokens_num);
+                printOut(vars[vars_num - 1].output);
             }
         }
 
