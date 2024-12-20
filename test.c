@@ -33,8 +33,13 @@ int main() {
                 output(tokens[0],vars,vars_num);
             }
             else {
-                Assign(tokens,vars,&vars_num,tokens_num);
-                printOut(vars[vars_num - 1].output);
+                int mem = Assign(tokens,vars,&vars_num,tokens_num);
+                if (mem != -1) {
+                    printOut(vars[mem].output);
+                }
+                else {
+                    printf("Error\n");
+                }
             }
         }
 

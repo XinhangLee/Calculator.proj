@@ -321,18 +321,46 @@ bool IsAssignment(Token *tokens) {
     return tokens[0].type == VARIABLE && tokens[1].value.str[0] == '=';
 }
 
-void Assign(Token *tokens,Variable vars[],int *vars_num, int tokens_num) {
+int FindSame(Variable vars[],int vars_num,char *str) {
+    int result = -1;
+    for (int i = 0; i < vars_num; i++) {
+        if (strcmp(vars[i].name,str) == 0) {
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
+int Assign(Token *tokens,Variable vars[],int *vars_num, int tokens_num) {
     if (!IsAssignment(tokens + 2)) {
-        strcpy(vars[*vars_num].name, tokens[0].value.str);
-        vars[*vars_num].output = Calculate(tokens + 2,tokens + tokens_num - 1,vars,*vars_num);
-        *vars_num += 1;
+        int index = FindSame(vars,*vars_num,tokens[0].value.str);
+        if (index == -1) {
+            strcpy(vars[*vars_num].name, tokens[0].value.str);
+            vars[*vars_num].output = Calculate(tokens + 2,tokens + tokens_num - 1,vars,*vars_num);
+            if (vars[*vars_num].output.outType != ERROR) {
+                *vars_num += 1;
+                return *vars_num - 1;
+            }
+            return -1;
+        }
+        vars[index].output = Calculate(tokens + 2,tokens + tokens_num - 1,vars,*vars_num);
+        if (vars[index].output.outType != ERROR)
+            return index;
+        return -1;
     }
-    else {
-        Assign(tokens + 2,vars,vars_num,tokens_num - 2);
-        strcpy(vars[*vars_num].name, tokens[0].value.str);
-        vars[*vars_num].output = vars[*vars_num - 1].output;
-        *vars_num += 1;
+    if (Assign(tokens + 2,vars,vars_num,tokens_num - 2) != -1) {
+        int index = FindSame(vars,*vars_num,tokens[0].value.str);
+        if (index == -1) {
+            strcpy(vars[*vars_num].name, tokens[0].value.str);
+            vars[*vars_num].output = vars[*vars_num - 1].output;
+            *vars_num += 1;
+            return *vars_num - 1;
+        }
+        vars[index].output = Calculate(tokens + 2,tokens + tokens_num - 1,vars,*vars_num);
+        return index;
     }
+    return -1;
 }
 
 void printOut(Output output) {
@@ -346,4 +374,5 @@ void printOut(Output output) {
         printf("%.6lf\n",output.out.fOut);
     }
 }
+
 

@@ -67,7 +67,8 @@ Output Calculate(Token *left, Token *right,Variable vars[],int vars_num);
 bool IsOutput(Token tokens,int tokens_num);
 void output(Token tokens,Variable vars[],int vars_num);
 
-void Assign(Token *tokens,Variable vars[],int *vars_num, int tokens_num);
+int FindSame(Variable vars[],int vars_num,char *str);
+int Assign(Token *tokens,Variable vars[],int *vars_num, int tokens_num);
 
 void printOut(Output output);
 
