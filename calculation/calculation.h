@@ -11,9 +11,14 @@
 
 enum tokens {ADD,SUB,MUL,DIV,EQU,LEFT,RIGHT,VARIABLE,INTEGER};
 
+typedef union value {
+    char str[32];
+    int num;
+} Value;
+
 typedef struct token {
     int type;
-    char str[32];
+    Value value;
 } Token;
 
 typedef struct variable {
@@ -21,29 +26,29 @@ typedef struct variable {
     int value;
 } Variable;
 
+
 //define the functions.
 
 bool IsDigit(char *str);
 int IsOperator(char *str);
 bool IsVariable(char *str);
 
-char *ToChar(int number,char *result);
-bool process(Token *token,Variable vars[],int vars_num);
-bool MorghJudge(char *str,Token tokens[],int *i,Variable vars[],int vars_num);
+bool process(Token *token);
+bool MorghJudge(char *str,Token tokens[],int *i);
 
-bool IsAssignment(Token tokens[]);
+bool IsAssignment(Token *tokens);
 
 bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num);
-int ToInt(char *str);
+void ToNum(Token *tokens);
 int check_parentheses(Token *left,Token *right);
 Token *FindMainOperator(Token *left,Token *right);
-bool IsNeg(Token *left,Token * right);
+int IsNeg(Token *left,Token * right);
 int Calculate(Token *left, Token *right,int *check);
 
 bool IsOutput(Token tokens,int tokens_num);
 void output(Token tokens,Variable vars[],int vars_num);
 
-void Assign(Token tokens[],Variable vars[],int vars_num, int tokens_num,int *check);
+void Assign(Token *tokens,Variable vars[],int vars_num, int tokens_num,int *check);
 
 void Print(Token tokens[], int vars_num);
 

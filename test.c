@@ -23,18 +23,22 @@ int main() {
         Token tokens[150];
         int tokens_num = 0;
 
-        if (MorghJudge(str,tokens,&tokens_num,vars,vars_num)) {
+        if (MorghJudge(str,tokens,&tokens_num)) {
             // printf("%d\n", tokens_num);
 
-            if (!IsAssignment(tokens) && !IsOutput(tokens[0],tokens_num) &&
-                Assignment(tokens,vars,tokens_num,vars_num)) {
-                // printf("yes\n");
-                int result = Calculate(tokens,tokens + tokens_num - 1,&check);
-                if (check == 0) {
-                    printf("Error\n");
+            if (!IsAssignment(tokens) && !IsOutput(tokens[0],tokens_num)){
+                if (Assignment(tokens,vars,tokens_num,vars_num)) {
+                    // printf("yes\n");
+                    int result = Calculate(tokens,tokens + tokens_num - 1,&check);
+                    if (check == 0) {
+                        printf("Error\n");
+                    }
+                    else {
+                        printf("%d\n", result);
+                    }
                 }
                 else {
-                    printf("%d\n", result);
+                    printf("Error\n");
                 }
             }
             else if (IsOutput(tokens[0],tokens_num)) {

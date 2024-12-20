@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 const char opt[7] = {'+','-','*','/','=','(',')'};
 
@@ -50,28 +51,16 @@ bool IsVariable(char *str) {
     return result;
 }
 
-char *ToChar(int number,char *result) {
-    int i;
-    for (i = 0; number != 0; i++, number /= 10) {
-        result[i] = number % 10 + '0';
-    }
-    i--;
-    for (int j = 0; j < i; i--,j++) {
-        char temp = result[j];
-        result[j] = result[i];
-        result[i] = temp;
-    }
-    return result;
-}
-
-bool process(Token *token,Variable vars[],int vars_num) {
-    int op = IsOperator(token->str);
-    if (IsDigit(token->str))
+bool process(Token *token) {
+    int op = IsOperator(token->value.str);
+    if (IsDigit(token->value.str)) {
         token->type = INTEGER;
+        ToNum(token);
+    }
     else if (op != -1){
         token->type = op;
     }
-    else if (IsVariable(token->str)) {
+    else if (IsVariable(token->value.str)) {
         token->type = VARIABLE;
     }
     else
@@ -79,15 +68,15 @@ bool process(Token *token,Variable vars[],int vars_num) {
     return true;
 }
 
-bool MorghJudge(char *str,Token tokens[], int *i,Variable vars[],int vars_num) {
+bool MorghJudge(char *str,Token tokens[], int *i) {
     for (char *pos = strchr(str,' '); pos != NULL; str = pos + 1, pos = strchr(str, ' ')) {
         *pos = '\0';
-        strcpy(tokens[*i].str,str);
-        if (!process(&tokens[(*i)++],vars,vars_num))
+        strcpy(tokens[*i].value.str,str);
+        if (!process(&tokens[(*i)++]))
             return false;
     }
-    strcpy(tokens[*i].str,str);
-    if (!process(&tokens[(*i)++],vars,vars_num))
+    strcpy(tokens[*i].value.str,str);
+    if (!process(&tokens[(*i)++]))
         return false;
     // Print(tokens,*i);
     return true;
@@ -98,9 +87,8 @@ bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num) {
         if (tokens[j].type == VARIABLE) {
             int found = 0;
             for (int i = 0; i < vars_num; i++) {
-                if (strcmp(tokens[j].str,vars[i].name) == 0) {
-                    char temp[50] = {'\0'};
-                    strcpy(tokens[j].str, ToChar(vars[i].value,temp));
+                if (strcmp(tokens[j].value.str,vars[i].name) == 0) {
+                    tokens[j].value.num = vars[i].value;
                     found = 1;
                     break;
                 }
@@ -113,18 +101,9 @@ bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num) {
     return true;
 }
 
-int ToInt(char *str) {
-    int value = 0;
-    while (*str != '\0') {
-        if (isdigit(*str)) {
-            value = (value * 10) + (*str - '0');
-        }
-        else if (*str == '-') {
-            value = -value;
-        }
-        str++;
-    }
-    return value;
+void ToNum(Token *tokens) {
+    int temp = atoi(tokens->value.str);
+    tokens->value.num = temp;
 }
 
 int check_parentheses(Token *left,Token *right) {
@@ -175,21 +154,17 @@ Token *FindMainOperator(Token *left,Token *right) {
     return key;
 }
 
-bool IsNeg(Token *left,Token *right) {
-    bool result = true;
+int IsNeg(Token *left,Token *right) {
+    int SubNum = 0;
     Token *l = left;
-    if (l -> type != SUB)
-        result = false;
-    while (result && l < right) {
-        if (l -> type != SUB) {
-            result = false;
-            break;
-        }
+    while (l -> type == SUB) {
+        SubNum++;
         l++;
     }
-    if (right -> type != INTEGER && right -> type != VARIABLE)
-        result = false;
-    return result;
+    if (!(l == right && (l -> type == INTEGER || l -> type == VARIABLE)) && !(l != right && check_parentheses(l,right))) {
+        SubNum = 0;
+    }
+    return SubNum;
 }
 
 int Calculate(Token *left, Token *right,int *check) {
@@ -199,7 +174,7 @@ int Calculate(Token *left, Token *right,int *check) {
         return output;
     }
     if (left == right) {
-        output = ToInt(left->str);
+        output = left ->value.num;
     }
     else if (check_parentheses(left,right) == 1) {
         return Calculate(left + 1,right - 1,check);
@@ -209,8 +184,11 @@ int Calculate(Token *left, Token *right,int *check) {
         return output;
     }
     else if (IsNeg(left,right)) {
-        strcat((left + 1) -> str,left ->str);
-        output = Calculate(left + 1,right,check);
+        int SubNum = IsNeg(left,right);
+        output = Calculate(left + SubNum,right,check);
+        while (SubNum--) {
+            output = -output;
+        }
     }
     else {
         Token *main = FindMainOperator(left,right);
@@ -246,7 +224,7 @@ bool IsOutput(Token tokens,int tokens_num) {
 
 void output(Token tokens,Variable vars[],int vars_num) {
     for (int i = 0; i < vars_num; i++) {
-        if (strcmp(vars[i].name,tokens.str) == 0) {
+        if (strcmp(vars[i].name,tokens.value.str) == 0) {
             printf("%d\n",vars[i].value);
             return;
         }
@@ -254,19 +232,23 @@ void output(Token tokens,Variable vars[],int vars_num) {
     printf("Error\n");
 }
 
-bool IsAssignment(Token tokens[]) {
-    return tokens[0].type == VARIABLE && tokens[1].str[0] == '=';
+bool IsAssignment(Token *tokens) {
+    return tokens[0].type == VARIABLE && tokens[1].value.str[0] == '=';
 }
 
-void Assign(Token tokens[],Variable vars[],int vars_num, int tokens_num,int *check) {
-    strcpy(vars[vars_num].name, tokens[0].str);
-    vars[vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check);
-
+void Assign(Token *tokens,Variable vars[],int vars_num, int tokens_num,int *check) {
+    if (!IsAssignment(tokens + 2)) {
+        strcpy(vars[vars_num].name, tokens[0].value.str);
+        vars[vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check);
+    }
+    else {
+        Assign(tokens + 2,vars,vars_num,tokens_num,check);
+    }
 }
 
 void Print(Token tokens[], int tokens_num) {
     for (int i = 0; i < tokens_num; i++) {
-        printf("%d %s\n",tokens[i].type,tokens[i].str);
+        printf("%d %s\n",tokens[i].type,tokens[i].value.str);
     }
 }
 
