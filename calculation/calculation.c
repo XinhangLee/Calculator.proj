@@ -2,6 +2,8 @@
 // Created by lixh1 on 24-12-15.
 //
 #include "calculation.h"
+
+#include <complex.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -82,13 +84,15 @@ bool MorghJudge(char *str,Token tokens[], int *i) {
     return true;
 }
 
-bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num) {
-    for (int j = 0; j < tokens_num; j++) {
-        if (tokens[j].type == VARIABLE) {
+bool Assignment(Token *left,Token *right,Variable vars[],int vars_num) {
+    Token *l = left;
+    while (l <= right) {
+        if (l->type == VARIABLE) {
             int found = 0;
             for (int i = 0; i < vars_num; i++) {
-                if (strcmp(tokens[j].value.str,vars[i].name) == 0) {
-                    tokens[j].value.num = vars[i].value;
+                if (strcmp(l->value.str,vars[i].name) == 0) {
+                    l->value.num = vars[i].value;
+                    l->type = INTEGER;
                     found = 1;
                     break;
                 }
@@ -97,6 +101,7 @@ bool Assignment(Token tokens[],Variable vars[],int tokens_num,int vars_num) {
                 return false;
             }
         }
+        l++;
     }
     return true;
 }
@@ -167,53 +172,58 @@ int IsNeg(Token *left,Token *right) {
     return SubNum;
 }
 
-int Calculate(Token *left, Token *right,int *check) {
+int Calculate(Token *left, Token *right,int *check,Variable vars[],int vars_num) {
     int output = 0;
-    if (left > right) {
-        *check = 0;
-        return output;
-    }
-    if (left == right) {
-        output = left ->value.num;
-    }
-    else if (check_parentheses(left,right) == 1) {
-        return Calculate(left + 1,right - 1,check);
-    }
-    else if (check_parentheses(left,right) == -1) {
-        *check = 0;
-        return output;
-    }
-    else if (IsNeg(left,right)) {
-        int SubNum = IsNeg(left,right);
-        output = Calculate(left + SubNum,right,check);
-        while (SubNum--) {
-            output = -output;
-        }
-    }
-    else {
-        Token *main = FindMainOperator(left,right);
-        if (main->type != ADD && main->type != SUB && main->type != MUL && main->type != DIV) {
+    if (Assignment(left,right,vars,vars_num)) {
+        if (left > right) {
             *check = 0;
             return output;
         }
-        int val1 = Calculate(left,main - 1,check);
-        int val2 = Calculate(main + 1,right,check);
-        switch (main->type) {
-            case ADD:
-                output = val1 + val2;break;
-            case SUB:
-                output = val1 - val2;break;
-            case MUL:
-                output = val1 * val2;break;
-            case DIV:
-                if (val2 == 0) {
-                    *check = 0;
-                    break;
-                }
-                output = val1 / val2;break;
-            default:
-                *check = 0;break;
+        if (left == right) {
+            output = left ->value.num;
         }
+        else if (check_parentheses(left,right) == 1) {
+            return Calculate(left + 1,right - 1,check,vars,vars_num);
+        }
+        else if (check_parentheses(left,right) == -1) {
+            *check = 0;
+            return output;
+        }
+        else if (IsNeg(left,right)) {
+            int SubNum = IsNeg(left,right);
+            output = Calculate(left + SubNum,right,check,vars,vars_num);
+            while (SubNum--) {
+                output = -output;
+            }
+        }
+        else {
+            Token *main = FindMainOperator(left,right);
+            if (main->type != ADD && main->type != SUB && main->type != MUL && main->type != DIV) {
+                *check = 0;
+                return output;
+            }
+            int val1 = Calculate(left,main - 1,check,vars,vars_num);
+            int val2 = Calculate(main + 1,right,check,vars,vars_num);
+            switch (main->type) {
+                case ADD:
+                    output = val1 + val2;break;
+                case SUB:
+                    output = val1 - val2;break;
+                case MUL:
+                    output = val1 * val2;break;
+                case DIV:
+                    if (val2 == 0) {
+                        *check = 0;
+                        break;
+                    }
+                output = val1 / val2;break;
+                default:
+                    *check = 0;break;
+            }
+        }
+    }
+    else {
+        *check = 0;
     }
     return output;
 }
@@ -236,13 +246,17 @@ bool IsAssignment(Token *tokens) {
     return tokens[0].type == VARIABLE && tokens[1].value.str[0] == '=';
 }
 
-void Assign(Token *tokens,Variable vars[],int vars_num, int tokens_num,int *check) {
+void Assign(Token *tokens,Variable vars[],int *vars_num, int tokens_num,int *check) {
     if (!IsAssignment(tokens + 2)) {
-        strcpy(vars[vars_num].name, tokens[0].value.str);
-        vars[vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check);
+        strcpy(vars[*vars_num].name, tokens[0].value.str);
+        vars[*vars_num].value = Calculate(tokens + 2,tokens + tokens_num - 1,check,vars,*vars_num);
+        *vars_num += 1;
     }
     else {
-        Assign(tokens + 2,vars,vars_num,tokens_num,check);
+        Assign(tokens + 2,vars,vars_num,tokens_num - 2,check);
+        strcpy(vars[*vars_num].name, tokens[0].value.str);
+        vars[*vars_num].value = vars[*vars_num - 1].value;
+        *vars_num += 1;
     }
 }
 
