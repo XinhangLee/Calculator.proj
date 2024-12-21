@@ -275,6 +275,11 @@ Output Calculate(Token *left, Token *right,Variable vars[],int vars_num) {
             return (Output){ERROR};
         }
         if (left == right) {
+            if (left -> type == SUB || left -> type == MUL
+                || left -> type == DIV || left -> type == ADD || left -> type == LEFT
+                || left -> type == RIGHT || left -> type == EQU) {
+                return (Output){ERROR};
+            }
             output.out = left ->value.out;
             output.outType = left->type;
         }
