@@ -159,6 +159,8 @@ int check_parentheses(Token *left,Token *right) {
             count--;
         if (count < 0)
             result = -1;//不合语法，直接OUT。
+        if (l != right && count == 0)
+            result = 0;
         l++;
     }
     if (count != 0)
@@ -181,13 +183,13 @@ Token *FindMainOperator(Token *left,Token *right) {
             l++;
             continue;
         }
-        if (key -> type == ADD || (key -> type == SUB && ((key - 1) -> type == VARIABLE || (key - 1) -> type == INTEGER || (key - 1) -> type == FLOATNUM))) {
-            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER || (l - 1) -> type == FLOATNUM))) {
+        if (key -> type == ADD || (key -> type == SUB && ((key - 1) -> type == VARIABLE || (key - 1) -> type == INTEGER || (key - 1) -> type == FLOATNUM || (key - 1) -> type == RIGHT))) {
+            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER || (l - 1) -> type == FLOATNUM || (l - 1) -> type == RIGHT))) {
                 key = l;
             }
         }
         else {
-            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER || (l - 1) -> type == FLOATNUM)) || l -> type == MUL || l -> type == DIV) {
+            if (l -> type == ADD || (l -> type == SUB && ((l - 1) -> type == VARIABLE || (l - 1) -> type == INTEGER || (l - 1) -> type == FLOATNUM || (l - 1) -> type == RIGHT)) || l -> type == MUL || l -> type == DIV) {
                 key = l;
             }
         }
@@ -357,7 +359,7 @@ int Assign(Token *tokens,Variable vars[],int *vars_num, int tokens_num) {
             *vars_num += 1;
             return *vars_num - 1;
         }
-        vars[index].output = Calculate(tokens + 2,tokens + tokens_num - 1,vars,*vars_num);
+        vars[index].output = vars[Assign(tokens + 2,vars,vars_num,tokens_num - 2)].output;
         return index;
     }
     return -1;
