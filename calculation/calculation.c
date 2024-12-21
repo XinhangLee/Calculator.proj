@@ -226,6 +226,10 @@ Output meetValue(int a,Output val1,Output val2) {
             case MUL:
                 output.out.iOut = val1.out.iOut * val2.out.iOut;break;
             case DIV:
+                if (val2.out.iOut == 0) {
+                    output.outType = ERROR;
+                    break;
+                }
                 output.out.iOut = val1.out.iOut / val2.out.iOut;break;
             default:
                 output.outType = ERROR;
@@ -251,6 +255,10 @@ Output meetValue(int a,Output val1,Output val2) {
             case MUL:
                 output.out.fOut = val1.out.fOut * val2.out.fOut;break;
             case DIV:
+                if (val2.out.iOut == 0) {
+                    output.outType = ERROR;
+                    break;
+                }
                 output.out.fOut = val1.out.fOut / val2.out.fOut;break;
             default:
                 output.outType = ERROR;
