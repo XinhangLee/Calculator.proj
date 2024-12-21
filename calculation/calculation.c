@@ -255,7 +255,7 @@ Output meetValue(int a,Output val1,Output val2) {
             case MUL:
                 output.out.fOut = val1.out.fOut * val2.out.fOut;break;
             case DIV:
-                if (val2.out.iOut == 0) {
+                if (val2.out.fOut == 0) {
                     output.outType = ERROR;
                     break;
                 }
